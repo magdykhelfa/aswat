@@ -1,0 +1,198 @@
+
+import React, { useState, useEffect } from 'react';
+import { ParticipationType, ParticipationStatus, Participant, User } from './types';
+import { CountdownTimer, THEME } from './constants';
+import Home from './pages/Home';
+import Register from './pages/Register';
+import Terms from './pages/Terms';
+import AdminDashboard from './pages/AdminDashboard';
+import JudgingPanel from './pages/JudgingPanel';
+import Results from './pages/Results';
+import Login from './pages/Login';
+
+const INITIAL_PARTICIPANTS: Participant[] = [
+  {
+    id: '1',
+    fullName: 'أحمد محمد علي',
+    age: 22,
+    country: 'محافظة كفر الشيخ - مسير',
+    whatsapp: '+20123456789',
+    email: 'ahmed@example.com',
+    type: ParticipationType.Quran,
+    fileUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
+    status: ParticipationStatus.Pending,
+    ratings: [],
+    averageScore: 0,
+    submittedAt: new Date('2025-10-01')
+  }
+];
+
+const App: React.FC = () => {
+  const [currentPage, setCurrentPage] = useState<string>('home');
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  
+  const [showCurrentResults, setShowCurrentResults] = useState<boolean>(() => {
+    return localStorage.getItem('aswat_show_results') === 'true';
+  });
+
+  const [lastYearWinners, setLastYearWinners] = useState<string[]>(() => {
+    const saved = localStorage.getItem('aswat_last_year');
+    return saved ? JSON.parse(saved) : Array(10).fill('');
+  });
+
+  const [participants, setParticipants] = useState<Participant[]>(() => {
+    const saved = localStorage.getItem('aswat_participants');
+    return saved ? JSON.parse(saved) : INITIAL_PARTICIPANTS;
+  });
+  
+  const [deadline, setDeadline] = useState<Date>(() => {
+    const saved = localStorage.getItem('aswat_deadline');
+    return saved ? new Date(saved) : new Date('2026-06-30T23:59:59');
+  });
+
+  useEffect(() => {
+    localStorage.setItem('aswat_participants', JSON.stringify(participants));
+  }, [participants]);
+
+  useEffect(() => {
+    localStorage.setItem('aswat_deadline', deadline.toISOString());
+  }, [deadline]);
+
+  useEffect(() => {
+    localStorage.setItem('aswat_show_results', showCurrentResults.toString());
+  }, [showCurrentResults]);
+
+  useEffect(() => {
+    localStorage.setItem('aswat_last_year', JSON.stringify(lastYearWinners));
+  }, [lastYearWinners]);
+
+  const handleLogin = (username: string, pass: string) => {
+    if (username === 'magdy' && pass === '5518') {
+      const adminUser: User = { id: 'admin-1', name: 'مجدي (المشرف العام)', role: 'admin' };
+      setCurrentUser(adminUser);
+      setCurrentPage('admin');
+      return true;
+    }
+    return false;
+  };
+
+  const logout = () => { setCurrentUser(null); setCurrentPage('home'); };
+
+  const addParticipant = (newParticipant: Participant) => {
+    setParticipants(prev => [newParticipant, ...prev]);
+    setCurrentPage('results');
+  };
+
+  const deleteParticipant = (id: string) => {
+    setParticipants(prev => prev.filter(p => p.id !== id));
+  };
+
+  const updateParticipantStatus = (id: string, status: ParticipationStatus) => {
+    setParticipants(prev => prev.map(p => p.id === id ? { ...p, status } : p));
+  };
+
+  const addRating = (participantId: string, score: number) => {
+    if (!currentUser) return;
+    setParticipants(prev => prev.map(p => {
+      if (p.id === participantId) {
+        const newRatings = [...p.ratings.filter(r => r.judgeId !== currentUser.id), {
+          judgeId: currentUser.id,
+          judgeName: currentUser.name,
+          score: score
+        }];
+        const avg = newRatings.reduce((acc, curr) => acc + curr.score, 0) / newRatings.length;
+        return { ...p, ratings: newRatings, averageScore: avg, status: ParticipationStatus.Qualified };
+      }
+      return p;
+    }));
+  };
+
+  const importData = (data: Participant[]) => {
+    setParticipants(prev => {
+      const existingIds = new Set(prev.map(p => p.id));
+      const newData = data.filter(p => !existingIds.has(p.id));
+      return [...prev, ...newData];
+    });
+  };
+
+  const renderPage = () => {
+    switch (currentPage) {
+      case 'home': return <Home onNavigate={setCurrentPage} deadline={deadline} />;
+      case 'register': return <Register onNavigate={setCurrentPage} onRegister={addParticipant} deadline={deadline} />;
+      case 'terms': return <Terms onNavigate={setCurrentPage} />;
+      case 'login': return <Login onLogin={handleLogin} onNavigate={setCurrentPage} />;
+      case 'admin': 
+        return currentUser?.role === 'admin' ? 
+          <AdminDashboard 
+            participants={participants} 
+            onUpdateStatus={updateParticipantStatus} 
+            onDelete={deleteParticipant} 
+            onLogout={logout}
+            onRate={addRating}
+            onImportData={importData}
+            currentUser={currentUser}
+            deadline={deadline}
+            onUpdateDeadline={setDeadline}
+            showCurrentResults={showCurrentResults}
+            onToggleResults={setShowCurrentResults}
+            lastYearWinners={lastYearWinners}
+            onUpdateLastYear={setLastYearWinners}
+          /> : <Login onLogin={handleLogin} onNavigate={setCurrentPage} />;
+      case 'results': 
+        return <Results 
+          participants={participants} 
+          onNavigate={setCurrentPage} 
+          showCurrentResults={showCurrentResults}
+          lastYearWinners={lastYearWinners}
+        />;
+      default: return <Home onNavigate={setCurrentPage} deadline={deadline} />;
+    }
+  };
+
+  return (
+    <div className="min-h-screen flex flex-col">
+      <header className="bg-white shadow-md sticky top-0 z-50 h-16 md:h-20">
+        <div className="max-w-7xl mx-auto px-3 md:px-4 h-full flex items-center justify-between">
+          <div className="flex items-center gap-2 md:gap-3 cursor-pointer" onClick={() => setCurrentPage('home')}>
+            <div className="w-9 h-9 md:w-12 md:h-12 bg-spiritual-green rounded-full flex items-center justify-center text-amber-400 text-lg md:text-2xl">
+              <i className="fa-solid fa-mosque"></i>
+            </div>
+            <div>
+              <h1 className="text-sm md:text-xl font-bold text-emerald-900 leading-tight font-amiri">أصوات من الجنة</h1>
+              <p className="text-[8px] md:text-[10px] text-amber-600 font-bold uppercase tracking-tighter">محافظة كفر الشيخ</p>
+            </div>
+          </div>
+          <nav className="hidden lg:flex gap-8 font-medium text-slate-600">
+            <button onClick={() => setCurrentPage('home')} className={`hover:text-emerald-800 transition ${currentPage === 'home' ? 'text-emerald-800 font-bold border-b-2 border-emerald-800' : ''}`}>الرئيسية</button>
+            <button onClick={() => setCurrentPage('results')} className={`hover:text-emerald-800 transition ${currentPage === 'results' ? 'text-emerald-800 font-bold border-b-2 border-emerald-800' : ''}`}>النتائج</button>
+            {currentUser?.role === 'admin' && (
+               <button onClick={() => setCurrentPage('admin')} className={`flex items-center gap-2 px-4 py-1 rounded-lg transition ${currentPage === 'admin' ? 'bg-emerald-800 text-white font-bold' : 'text-emerald-700 font-bold hover:bg-emerald-50'}`}>
+                 <i className="fa-solid fa-gauge-high"></i> لوحة التحكم
+               </button>
+            )}
+          </nav>
+          <div className="flex gap-2">
+            {!currentUser ? (
+              <button onClick={() => setCurrentPage('login')} className="bg-spiritual-green text-white px-4 py-1.5 md:px-6 md:py-2 rounded-full text-xs md:text-sm font-bold shadow-lg hover:bg-emerald-800 transition">الدخول</button>
+            ) : (
+              <div className="flex items-center gap-2 md:gap-4 bg-slate-50 px-2 py-1 md:px-4 md:py-2 rounded-xl border border-slate-100">
+                <div className="hidden sm:block text-right">
+                  <div className="text-[8px] font-bold text-slate-400">مرحباً</div>
+                  <div className="text-[10px] font-black text-emerald-800">{currentUser.name.split(' ')[0]}</div>
+                </div>
+                <button onClick={logout} className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-red-50 text-red-500 hover:bg-red-500 hover:text-white transition flex items-center justify-center"><i className="fa-solid fa-power-off text-xs"></i></button>
+              </div>
+            )}
+          </div>
+        </div>
+      </header>
+      <main className="flex-grow">{renderPage()}</main>
+      <footer className="bg-slate-900 text-white py-8 md:py-10 text-center">
+        <p className="font-amiri text-lg md:text-xl mb-1 text-amber-400 px-4">أصوات من الجنة - محافظة كفر الشيخ</p>
+        <p className="text-[10px] text-slate-500">نظام إدارة المسابقات الذكي &copy; 2026</p>
+      </footer>
+    </div>
+  );
+};
+
+export default App;
