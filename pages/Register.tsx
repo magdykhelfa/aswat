@@ -30,7 +30,7 @@ const Register: React.FC<RegisterProps> = ({ onNavigate, onRegister, deadline })
   const [uploadProgress, setUploadProgress] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
   e.preventDefault();
 
   if (isExpired) {
@@ -38,16 +38,46 @@ const Register: React.FC<RegisterProps> = ({ onNavigate, onRegister, deadline })
     return;
   }
 
-  if (!formData.agreed) {
-    alert('يرجى الموافقة على شروط المسابقة');
+  if (!formData.agreed || !file) {
+    alert('يرجى استكمال البيانات ورفع الملف');
     return;
   }
 
-  // رابط Google Form
-  const googleFormUrl = 'https://docs.google.com/forms/d/e/1FAIpQLSeLlhBn0k8Lgl7Dy2jhcL9iLKlUH8VSxgxIhFLNg5Qi8I-tMg/viewform?usp=dialog';
+  setIsSubmitting(true);
 
-  window.open(googleFormUrl, '_blank');
+  const reader = new FileReader();
+  reader.readAsDataURL(file);
+
+  reader.onload = async () => {
+    const base64 = reader.result?.toString().split(',')[1];
+
+    const payload = {
+      fullName: formData.fullName,
+      age: formData.age,
+      district: formData.district,
+      whatsapp: formData.whatsapp,
+      email: formData.email,
+      type: formData.type,
+      file: base64,
+      fileName: `${formData.fullName}.${file.name.split('.').pop()}`,
+      fileType: file.type
+    };
+
+    try {
+      await fetch("https://script.google.com/macros/s/AKfycbx4G8vmyVpVpaCtpLlc48DsMoRba3_yq-mRU63SpFf2GVXs2pAEFILHLpqZuk_8NQPo/exec", {
+        method: "POST",
+        body: new URLSearchParams(payload)
+      });
+
+      alert("تم تسجيل مشاركتك ورفع الملف بنجاح");
+      setIsSubmitting(false);
+    } catch {
+      alert("حدث خطأ أثناء الإرسال");
+      setIsSubmitting(false);
+    }
+  };
 };
+
 
 
   const finalizeSubmission = () => {
