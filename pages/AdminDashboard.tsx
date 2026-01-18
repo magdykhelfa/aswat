@@ -130,6 +130,33 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
     setTempDate(getLocalDateString(deadline));
     setTempTime(getLocalTimeString(deadline));
   }, [deadline]);
+  // 🔹 جلب المشاركين من Google Sheet عند فتح لوحة الأدمن
+useEffect(() => {
+  fetch("https://script.google.com/macros/s/AKfycbwCk2LmjTBdTJ18E1EAmLMJpWs6VhrqrM70WXiWfkMBjP3iLd84MTjR-L8m65P7b2Bd/exec")
+    .then(res => res.json())
+    .then(data => {
+      // تحويل البيانات القادمة من الـ API لنفس شكل Participant
+      const mapped: Participant[] = data.map((item: any) => ({
+        id: item.id,
+        fullName: item.fullName,
+        age: Number(item.age),
+        country: item.district,
+        whatsapp: item.whatsapp,
+        email: item.email,
+        type: item.type,
+        fileUrl: item.videoUrl,
+        status: ParticipationStatus.Pending,
+        ratings: [],
+        averageScore: item.score ? Number(item.score) : 0,
+        submittedAt: new Date()
+      }));
+
+      onImportData(mapped);
+    })
+    .catch(err => {
+      console.error("خطأ في تحميل المشاركين", err);
+    });
+}, []);
 
   const handleDeadlineSave = (e: React.FormEvent) => {
     e.preventDefault();
