@@ -44,7 +44,7 @@ const Register: React.FC<RegisterProps> = ({ onNavigate, onRegister, deadline })
   }
 
   // رابط Google Form
-  const googleFormUrl = 'PUT_GOOGLE_FORM_LINK_HERE';
+  const googleFormUrl = 'https://docs.google.com/forms/d/e/1FAIpQLSeLlhBn0k8Lgl7Dy2jhcL9iLKlUH8VSxgxIhFLNg5Qi8I-tMg/viewform?usp=dialog';
 
   window.open(googleFormUrl, '_blank');
 };
