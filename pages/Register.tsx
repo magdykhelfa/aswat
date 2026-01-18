@@ -30,29 +30,25 @@ const Register: React.FC<RegisterProps> = ({ onNavigate, onRegister, deadline })
   const [uploadProgress, setUploadProgress] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (isExpired) {
-        alert('نعتذر، لقد تم إغلاق باب التسجيل');
-        return;
-    }
-    if (!formData.agreed || !file) {
-      alert('يرجى الموافقة على الشروط ورفع ملف المشاركة');
-      return;
-    }
+  const handleSubmit = (e: React.FormEvent) => {
+  e.preventDefault();
 
-    setIsSubmitting(true);
-    
-    let progress = 0;
-    const interval = setInterval(() => {
-      progress += 10;
-      setUploadProgress(progress);
-      if (progress >= 100) {
-        clearInterval(interval);
-        finalizeSubmission();
-      }
-    }, 200);
-  };
+  if (isExpired) {
+    alert('نعتذر، لقد تم إغلاق باب التسجيل');
+    return;
+  }
+
+  if (!formData.agreed) {
+    alert('يرجى الموافقة على شروط المسابقة');
+    return;
+  }
+
+  // رابط Google Form
+  const googleFormUrl = 'PUT_GOOGLE_FORM_LINK_HERE';
+
+  window.open(googleFormUrl, '_blank');
+};
+
 
   const finalizeSubmission = () => {
     const newParticipant: Participant = {
