@@ -163,20 +163,7 @@ const JudgingPanel: React.FC<JudgingPanelProps> = ({ participants, currentUser, 
               </div>
 
               <div className="p-6 md:p-10 space-y-10">
-                {/* مشغل الصوت المحسن */}
-                <div className="bg-slate-50 p-6 md:p-8 rounded-3xl border border-slate-100">
-                  <h4 className="font-black text-slate-700 mb-6 flex items-center gap-3">
-                    <div className="w-2 h-6 bg-amber-500 rounded-full"></div>
-                    الاستماع للأداء الصوتي
-                  </h4>
-                  <div className="bg-white p-4 rounded-2xl shadow-inner">
-                    <audio controls className="w-full h-12" key={current.fileUrl}>
-                      <source src={current.fileUrl} />
-                      متصفحك لا يدعم تشغيل الصوت.
-                    </audio>
-                  </div>
-                </div>
-
+                              
                 {/* نظام الدرجات المحسن */}
                 <div>
                   <h4 className="font-black text-slate-700 mb-8 flex items-center gap-3">
