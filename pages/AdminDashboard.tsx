@@ -159,22 +159,29 @@ useEffect(() => {
 }, []);
 
   const handleDeadlineSave = (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      const [year, month, day] = tempDate.split('-').map(Number);
-      const [hours, minutes] = tempTime.split(':').map(Number);
-      const newDeadline = new Date(year, month - 1, day, hours, minutes, 0);
-      onUpdateDeadline(newDeadline);
-  fetch("https://script.google.com/macros/s/AKfycbwpX1VObGTQ9ZnKH1F41CUFJP-L8vU6j_P2AIWuAFA9lthACDJ1XVzA1LFXPzQPtOxP/exec", {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/x-www-form-urlencoded",
-  },
-  body: new URLSearchParams({
-    action: "updateSettings",
-    deadline: newDeadline.toISOString().slice(0,16).replace("T", " ")
-  }),
-});
+  e.preventDefault();
+
+  try {
+    const [year, month, day] = tempDate.split('-').map(Number);
+    const [hours, minutes] = tempTime.split(':').map(Number);
+    const newDeadline = new Date(year, month - 1, day, hours, minutes, 0);
+
+    // ✅ تحديث محلي
+    onUpdateDeadline(newDeadline);
+
+    // ✅ تحديث السيرفر (الشيت)
+    const params = new URLSearchParams({
+      action: "updateSettings",
+      deadline: newDeadline.toISOString()
+    });
+
+    fetch("https://script.google.com/macros/s/AKfycbwpX1VObGTQ9ZnKH1F41CUFJP-L8vU6j_P2AIWuAFA9lthACDJ1XVzA1LFXPzQPtOxP/exec", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: params,
+    });
 
       alert('✅ تم تحديث موعد الإغلاق.');
     } catch (err) { alert('خطأ في البيانات'); }
