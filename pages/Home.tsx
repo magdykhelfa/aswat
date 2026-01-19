@@ -1,20 +1,22 @@
-
 import React, { useState, useEffect } from 'react';
 import { CountdownTimer } from '../constants';
 
 interface HomeProps {
   onNavigate: (page: string) => void;
-  deadline: Date;
+  deadline: Date | null;
 }
 
 const Home: React.FC<HomeProps> = ({ onNavigate, deadline }) => {
   const [isExpired, setIsExpired] = useState(false);
 
   useEffect(() => {
+    if (!deadline) return;
+
     const checkExpiry = () => {
       const now = new Date();
       setIsExpired(now > deadline);
     };
+
     checkExpiry();
     const timer = setInterval(checkExpiry, 1000);
     return () => clearInterval(timer);
@@ -68,9 +70,20 @@ const Home: React.FC<HomeProps> = ({ onNavigate, deadline }) => {
           </div>
 
           <div className="bg-black/40 backdrop-blur-md p-4 md:p-8 rounded-[2rem] md:rounded-[3rem] border border-white/10 inline-block w-full md:w-auto min-w-[300px]">
-            {!isExpired ? (
+            {!deadline ? (
               <>
-                <p className="text-amber-200 mb-3 md:mb-4 text-[10px] md:text-sm font-bold uppercase tracking-[0.2em] md:tracking-[0.4em]">متبقي على إغلاق باب التسجيل لعام 2026</p>
+                <p className="text-amber-200 mb-3 md:mb-4 text-[10px] md:text-sm font-bold uppercase tracking-[0.2em] md:tracking-[0.4em]">
+                  جاري تحميل الموعد
+                </p>
+                <div className="text-white font-bold text-lg animate-pulse">
+                  انتظر قليلاً...
+                </div>
+              </>
+            ) : !isExpired ? (
+              <>
+                <p className="text-amber-200 mb-3 md:mb-4 text-[10px] md:text-sm font-bold uppercase tracking-[0.2em] md:tracking-[0.4em]">
+                  متبقي على إغلاق باب التسجيل لعام 2026
+                </p>
                 <CountdownTimer targetDate={deadline} />
               </>
             ) : (
@@ -108,7 +121,7 @@ const Home: React.FC<HomeProps> = ({ onNavigate, deadline }) => {
              </p>
              
              <div className="inline-block px-6 py-4 md:px-10 md:py-6 bg-emerald-950 rounded-2xl md:rounded-3xl shadow-2xl w-full md:w-auto">
-                <p className="text-amber-200 text-xs md:text-lg mb-1 md:mb-2">تحت إشراف ورعاية</p>
+                <p className="text-amber-200 text-xs md:text-lg mb-1 md:mb-2">لصاحبها ومديرها</p>
                 <p className="text-white text-xl md:text-5xl font-amiri font-bold">
                    الأستاذ / <span className="text-amber-400">عادل خلفه</span>
                 </p>
