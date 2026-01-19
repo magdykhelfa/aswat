@@ -64,7 +64,7 @@ const Register: React.FC<RegisterProps> = ({ onNavigate, onRegister, deadline })
     };
 
     try {
-      await fetch("https://script.google.com/macros/s/AKfycbwH3DYcc9nBr8pyDjrSR8pzKugI0qUZidDcrl0l3GTbSYpdGWskb5VIAq4hrRfo_2I/exec", {
+      await fetch("https://script.google.com/macros/s/AKfycbz3p0cEK08K4hXFStsvyTvVDJGKdGGrgZFsgFLgaGWh98Acbw3V3IW0uXqArHs4zqCd/exec", {
         method: "POST",
         body: new URLSearchParams(payload)
       });
