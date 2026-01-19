@@ -118,15 +118,29 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
       params.append(`winner_${index + 1}`, name);
     });
   
-    fetch("https://script.google.com/macros/s/AKfycbwpX1VObGTQ9ZnKH1F41CUFJP-L8vU6j_P2AIWuAFA9lthACDJ1XVzA1LFXPzQPtOxP/exec", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-      body: params,
-    });
+    try {
+      const res = await fetch(
+        "https://script.google.com/macros/s/AKfycbwpX1VObGTQ9ZnKH1F41CUFJP-L8vU6j_P2AIWuAFA9lthACDJ1XVzA1LFXPzQPtOxP/exec",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+          body: params,
+        }
+      );
   
-    alert('✅ تم حفظ أوائل العام الماضي');
+      const data = await res.json();
+  
+      if (data.status === "settings_saved") {
+        alert("✅ تم حفظ أوائل العام الماضي بنجاح");
+      } else {
+        alert("❌ فشل الحفظ في السيرفر");
+      }
+    } catch (err) {
+      alert("❌ خطأ في الاتصال بالأب تاسك");
+      console.error(err);
+    }
   };
 
   const getLocalDateString = (date: Date) => {
