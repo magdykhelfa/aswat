@@ -42,19 +42,14 @@ const App: React.FC = () => {
         if (settings.deadline) {
           setDeadline(new Date(settings.deadline));
         }
-      })
-      .catch(err => {
-        console.error("فشل تحميل الإعدادات", err);
-      });
-  }, []);
-
+  
         if (settings.show_results !== undefined) {
           setShowCurrentResults(
             settings.show_results === true ||
             settings.show_results === "true"
           );
         }
-
+  
         const winners = [
           settings.winner_1,
           settings.winner_2,
@@ -67,7 +62,7 @@ const App: React.FC = () => {
           settings.winner_9,
           settings.winner_10,
         ].map(w => w || "");
-
+  
         setLastYearWinners(winners);
       })
       .catch(err => {
