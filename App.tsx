@@ -19,9 +19,7 @@ const App: React.FC = () => {
   /* =========================
      🔹 الإعدادات العامة (من السيرفر)
   ========================= */
-  const [deadline, setDeadline] = useState<Date>(
-    new Date('2026-06-30T23:59:59') // fallback فقط
-  );
+  const [deadline, setDeadline] = useState<Date | null>(null);
 
   const [showCurrentResults, setShowCurrentResults] = useState<boolean>(false);
 
@@ -44,6 +42,11 @@ const App: React.FC = () => {
         if (settings.deadline) {
           setDeadline(new Date(settings.deadline));
         }
+      })
+      .catch(err => {
+        console.error("فشل تحميل الإعدادات", err);
+      });
+  }, []);
 
         if (settings.show_results !== undefined) {
           setShowCurrentResults(
