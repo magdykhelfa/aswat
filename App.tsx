@@ -9,6 +9,7 @@ import JudgingPanel from './pages/JudgingPanel';
 import Results from './pages/Results';
 import Login from './pages/Login';
 
+const [loadingDeadline, setLoadingDeadline] = useState(true);
 const INITIAL_PARTICIPANTS: Participant[] = [{} as Participant];
 
 const App: React.FC = () => {
@@ -41,7 +42,8 @@ const App: React.FC = () => {
         }
       })
       .finally(() => {
-        setLoadingDeadline(false);
+        setLoadingDeadline(false); // 👈 مهم
+      });
   }, []);
 
   useEffect(() => {
@@ -150,6 +152,7 @@ const App: React.FC = () => {
         return <Home onNavigate={setCurrentPage} deadline={deadline} />;
     }
   };
+  
   if (loadingDeadline || !deadline) {
   return (
     <div className="flex items-center justify-center h-[60vh] text-slate-500 font-bold">
