@@ -41,13 +41,14 @@ const params = new URLSearchParams({
   score: score.toString(),
 });
 
-// fetch(API_URL, {
-//   method: "POST",
-//   headers: {
-//     "Content-Type": "application/x-www-form-urlencoded",
-//   },
-//   body: params,
-// });
+fetch("https://script.google.com/macros/s/AKfycbyIic09bQb9T3mtIIIvlyN15Hfgut8c2GnvM8e6K4L1HY5haPnTp5O7qEHpXGzmS_a5/exec", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/x-www-form-urlencoded",
+  },
+  body: params,
+});
+
 
       // إظهار رسالة نجاح مؤقتة
       setShowSuccess(true);
