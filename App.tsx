@@ -15,8 +15,9 @@ const App: React.FC = () => {
   const [currentPage, setCurrentPage] = useState<string>('home');
   const [currentUser, setCurrentUser] = useState<User | null>(null);
 
-  const [deadline, setDeadline] = useState<Date | null>(null);
-  const [loadingDeadline, setLoadingDeadline] = useState(true);
+  const [deadline, setDeadline] = useState<Date>(
+  new Date('2026-06-30T23:59:59')
+);
 
   const [showCurrentResults, setShowCurrentResults] = useState<boolean>(() => {
     return localStorage.getItem('aswat_show_results') === 'true';
@@ -42,11 +43,9 @@ const App: React.FC = () => {
           // fallback علشان الموقع ميموتش
           setDeadline(new Date('2026-06-30T23:59:59'));
         }
-        setLoadingDeadline(false); // ⭐⭐⭐ السطر المهم
       })
       .catch(() => {
         setDeadline(new Date('2026-06-30T23:59:59'));
-         setLoadingDeadline(false); // ⭐⭐⭐ مهم جدًا
       });
   }, []);
 
@@ -156,15 +155,7 @@ const App: React.FC = () => {
         return <Home onNavigate={setCurrentPage} deadline={deadline} />;
     }
   };
-  
-  if (loadingDeadline) { // 👈 التغيير الوحيد هنا لضمان فتح الموقع
-  return (
-    <div className="flex items-center justify-center h-[60vh] text-slate-500 font-bold">
-      جاري تحميل البيانات...
-    </div>
-  );
-}
-    
+     
   return (
     <div className="min-h-screen flex flex-col">
       <header className="bg-white shadow-md sticky top-0 z-50 h-16 md:h-20">
