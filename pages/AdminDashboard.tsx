@@ -106,8 +106,27 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
   };
 
   const saveWinners = () => {
+    // تحديث محلي
     onUpdateLastYear(tempWinners);
-    alert('✅ تم حفظ قائمة أوائل العام الماضي.');
+  
+    // تجهيز البيانات للسيرفر
+    const params = new URLSearchParams({
+      action: "updateSettings",
+    });
+  
+    tempWinners.forEach((name, index) => {
+      params.append(`winner_${index + 1}`, name);
+    });
+  
+    fetch("https://script.google.com/macros/s/AKfycbwpX1VObGTQ9ZnKH1F41CUFJP-L8vU6j_P2AIWuAFA9lthACDJ1XVzA1LFXPzQPtOxP/exec", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: params,
+    });
+  
+    alert('✅ تم حفظ أوائل العام الماضي');
   };
 
   const getLocalDateString = (date: Date) => {
