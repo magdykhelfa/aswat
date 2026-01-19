@@ -105,11 +105,10 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
     setTempWinners(newWinners);
   };
 
-  const saveWinners = () => {
+  const saveWinners = async () => {
     // تحديث محلي
     onUpdateLastYear(tempWinners);
   
-    // تجهيز البيانات للسيرفر
     const params = new URLSearchParams({
       action: "updateSettings",
     });
@@ -135,13 +134,14 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
       if (data.status === "settings_saved") {
         alert("✅ تم حفظ أوائل العام الماضي بنجاح");
       } else {
-        alert("❌ فشل الحفظ في السيرفر");
+        alert("❌ السيرفر لم يؤكد الحفظ");
       }
     } catch (err) {
-      alert("❌ خطأ في الاتصال بالأب تاسك");
       console.error(err);
+      alert("❌ خطأ أثناء الاتصال بالأب تاسك");
     }
   };
+
 
   const getLocalDateString = (date: Date) => {
     const year = date.getFullYear();
