@@ -34,7 +34,21 @@ const JudgingPanel: React.FC<JudgingPanelProps> = ({ participants, currentUser, 
   const handleRate = () => {
     if (current) {
       onRate(current.id, score);
-      
+      // 🔹 تجهيز حفظ التقييم (سيتم تفعيله بعد النشر)
+const params = new URLSearchParams({
+  action: "updateScore",
+  id: current.id,
+  score: score.toString(),
+});
+
+// fetch(API_URL, {
+//   method: "POST",
+//   headers: {
+//     "Content-Type": "application/x-www-form-urlencoded",
+//   },
+//   body: params,
+// });
+
       // إظهار رسالة نجاح مؤقتة
       setShowSuccess(true);
       setTimeout(() => setShowSuccess(false), 2000);
