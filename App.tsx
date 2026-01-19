@@ -9,68 +9,71 @@ import Login from './pages/Login';
 
 const INITIAL_PARTICIPANTS: Participant[] = [];
 
-const SETTINGS_API =
-  "https://script.google.com/macros/s/AKfycbwpX1VObGTQ9ZnKH1F41CUFJP-L8vU6j_P2AIWuAFA9lthACDJ1XVzA1LFXPzQPtOxP/exec?action=getSettings";
-
 const App: React.FC = () => {
   const [currentPage, setCurrentPage] = useState<string>('home');
-  const [currentUser, setCurrentUser] = useState<User | null>(null);
 
   /* =========================
-     🔹 الإعدادات العامة (من السيرفر)
+     🔹 المستخدم (الأدمن)
   ========================= */
-  const [deadline, setDeadline] = useState<Date>(
-    new Date('2026-06-30T23:59:59') // fallback فقط
-  );
-
-  const [showCurrentResults, setShowCurrentResults] = useState<boolean>(false);
-
-  const [lastYearWinners, setLastYearWinners] = useState<string[]>(
-    Array(10).fill('')
-  );
+  const [currentUser, setCurrentUser] = useState<User | null>(() => {
+    const saved = localStorage.getItem('aswat_admin');
+    return saved ? JSON.parse(saved) : null;
+  });
 
   /* =========================
-     🔹 المشاركين
+     🔹 الإعدادات العامة
   ========================= */
-  const [participants, setParticipants] = useState<Participant[]>([]);
+  const [showCurrentResults, setShowCurrentResults] = useState<boolean>(() => {
+    return localStorage.getItem('aswat_show_results') === 'true';
+  });
+
+  const [lastYearWinners, setLastYearWinners] = useState<string[]>(() => {
+    const saved = localStorage.getItem('aswat_last_year');
+    return saved ? JSON.parse(saved) : Array(10).fill('');
+  });
+
+  const [participants, setParticipants] = useState<Participant[]>(() => {
+    const saved = localStorage.getItem('aswat_participants');
+    return saved ? JSON.parse(saved) : INITIAL_PARTICIPANTS;
+  });
+
+  const [deadline, setDeadline] = useState<Date>(() => {
+    const saved = localStorage.getItem('aswat_deadline');
+    return saved ? new Date(saved) : new Date('2026-06-30T23:59:59');
+  });
 
   /* =========================
-     🔹 تحميل الإعدادات مرة واحدة من Google Sheet
+     🔹 تحميل الموعد من الشيت
   ========================= */
   useEffect(() => {
-    fetch(SETTINGS_API)
+    fetch('https://script.google.com/macros/s/AKfycbwpX1VObGTQ9ZnKH1F41CUFJP-L8vU6j_P2AIWuAFA9lthACDJ1XVzA1LFXPzQPtOxP/exec?action=getSettings')
       .then(res => res.json())
       .then(settings => {
         if (settings.deadline) {
           setDeadline(new Date(settings.deadline));
         }
-
-        if (settings.show_results !== undefined) {
-          setShowCurrentResults(
-            settings.show_results === true ||
-            settings.show_results === "true"
-          );
-        }
-
-        const winners = [
-          settings.winner_1,
-          settings.winner_2,
-          settings.winner_3,
-          settings.winner_4,
-          settings.winner_5,
-          settings.winner_6,
-          settings.winner_7,
-          settings.winner_8,
-          settings.winner_9,
-          settings.winner_10,
-        ].map(w => w || "");
-
-        setLastYearWinners(winners);
       })
-      .catch(err => {
-        console.error("فشل تحميل الإعدادات من السيرفر", err);
-      });
+      .catch(() => {});
   }, []);
+
+  /* =========================
+     🔹 حفظ الحالات
+  ========================= */
+  useEffect(() => {
+    localStorage.setItem('aswat_participants', JSON.stringify(participants));
+  }, [participants]);
+
+  useEffect(() => {
+    localStorage.setItem('aswat_deadline', deadline.toISOString());
+  }, [deadline]);
+
+  useEffect(() => {
+    localStorage.setItem('aswat_show_results', showCurrentResults.toString());
+  }, [showCurrentResults]);
+
+  useEffect(() => {
+    localStorage.setItem('aswat_last_year', JSON.stringify(lastYearWinners));
+  }, [lastYearWinners]);
 
   /* =========================
      🔹 تسجيل الدخول
@@ -80,9 +83,10 @@ const App: React.FC = () => {
       const adminUser: User = {
         id: 'admin-1',
         name: 'مجدي (المشرف العام)',
-        role: 'admin'
+        role: 'admin',
       };
       setCurrentUser(adminUser);
+      localStorage.setItem('aswat_admin', JSON.stringify(adminUser));
       setCurrentPage('admin');
       return true;
     }
@@ -91,6 +95,7 @@ const App: React.FC = () => {
 
   const logout = () => {
     setCurrentUser(null);
+    localStorage.removeItem('aswat_admin');
     setCurrentPage('home');
   };
 
@@ -114,7 +119,6 @@ const App: React.FC = () => {
 
   const addRating = (participantId: string, score: number) => {
     if (!currentUser) return;
-
     setParticipants(prev =>
       prev.map(p => {
         if (p.id === participantId) {
@@ -123,19 +127,17 @@ const App: React.FC = () => {
             {
               judgeId: currentUser.id,
               judgeName: currentUser.name,
-              score
-            }
+              score,
+            },
           ];
-
           const avg =
-            newRatings.reduce((acc, r) => acc + r.score, 0) /
+            newRatings.reduce((a, b) => a + b.score, 0) /
             newRatings.length;
-
           return {
             ...p,
             ratings: newRatings,
             averageScore: avg,
-            status: ParticipationStatus.Qualified
+            status: ParticipationStatus.Qualified,
           };
         }
         return p;
@@ -146,8 +148,7 @@ const App: React.FC = () => {
   const importData = (data: Participant[]) => {
     setParticipants(prev => {
       const ids = new Set(prev.map(p => p.id));
-      const newOnes = data.filter(p => !ids.has(p.id));
-      return [...prev, ...newOnes];
+      return [...prev, ...data.filter(p => !ids.has(p.id))];
     });
   };
 
@@ -158,7 +159,6 @@ const App: React.FC = () => {
     switch (currentPage) {
       case 'home':
         return <Home onNavigate={setCurrentPage} deadline={deadline} />;
-
       case 'register':
         return (
           <Register
@@ -167,13 +167,10 @@ const App: React.FC = () => {
             deadline={deadline}
           />
         );
-
       case 'terms':
         return <Terms onNavigate={setCurrentPage} />;
-
       case 'login':
         return <Login onLogin={handleLogin} onNavigate={setCurrentPage} />;
-
       case 'admin':
         return currentUser?.role === 'admin' ? (
           <AdminDashboard
@@ -194,7 +191,6 @@ const App: React.FC = () => {
         ) : (
           <Login onLogin={handleLogin} onNavigate={setCurrentPage} />
         );
-
       case 'results':
         return (
           <Results
@@ -204,7 +200,6 @@ const App: React.FC = () => {
             lastYearWinners={lastYearWinners}
           />
         );
-
       default:
         return <Home onNavigate={setCurrentPage} deadline={deadline} />;
     }
