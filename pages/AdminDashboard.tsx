@@ -132,7 +132,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
   }, [deadline]);
   // 🔹 جلب المشاركين من Google Sheet عند فتح لوحة الأدمن
 useEffect(() => {
-  fetch("https://script.google.com/macros/s/AKfycbwH3DYcc9nBr8pyDjrSR8pzKugI0qUZidDcrl0l3GTbSYpdGWskb5VIAq4hrRfo_2I/exec")
+  fetch("https://script.google.com/macros/s/AKfycbz3p0cEK08K4hXFStsvyTvVDJGKdGGrgZFsgFLgaGWh98Acbw3V3IW0uXqArHs4zqCd/exec")
     .then(res => res.json())
     .then(data => {
       // تحويل البيانات القادمة من الـ API لنفس شكل Participant
