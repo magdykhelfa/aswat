@@ -41,7 +41,7 @@ const params = new URLSearchParams({
   score: score.toString(),
 });
 
-fetch("https://script.google.com/macros/s/AKfycbyIic09bQb9T3mtIIIvlyN15Hfgut8c2GnvM8e6K4L1HY5haPnTp5O7qEHpXGzmS_a5/exec", {
+fetch("https://script.google.com/macros/s/AKfycbxgYH_eOWPHcb_E-_N0f7cwVFM_IOjGKFO6FL9MW2yAduzlx7f2Pv4znGk0ujtUw66U/exec", {
   method: "POST",
   headers: {
     "Content-Type": "application/x-www-form-urlencoded",
