@@ -132,7 +132,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
   }, [deadline]);
   // 🔹 جلب المشاركين من Google Sheet عند فتح لوحة الأدمن
 useEffect(() => {
-  fetch("https://script.google.com/macros/s/AKfycbwp7Lu50-VDbuIbvgW_E-3Jm4E8BO_T3Bm1bhbWt3FrCPX6OOPYqNjNgd6YzbrTZE5p/exec")
+  fetch("https://script.google.com/macros/s/AKfycbwpX1VObGTQ9ZnKH1F41CUFJP-L8vU6j_P2AIWuAFA9lthACDJ1XVzA1LFXPzQPtOxP/exec")
     .then(res => res.json())
     .then(data => {
       // تحويل البيانات القادمة من الـ API لنفس شكل Participant
@@ -165,6 +165,17 @@ useEffect(() => {
       const [hours, minutes] = tempTime.split(':').map(Number);
       const newDeadline = new Date(year, month - 1, day, hours, minutes, 0);
       onUpdateDeadline(newDeadline);
+  fetch("https://script.google.com/macros/s/AKfycbwpX1VObGTQ9ZnKH1F41CUFJP-L8vU6j_P2AIWuAFA9lthACDJ1XVzA1LFXPzQPtOxP/exec", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/x-www-form-urlencoded",
+  },
+  body: new URLSearchParams({
+    action: "updateSettings",
+    deadline: newDeadline.toISOString().slice(0,16).replace("T", " ")
+  }),
+});
+
       alert('✅ تم تحديث موعد الإغلاق.');
     } catch (err) { alert('خطأ في البيانات'); }
   };
