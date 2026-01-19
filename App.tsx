@@ -12,7 +12,6 @@ import Login from './pages/Login';
 const INITIAL_PARTICIPANTS: Participant[] = [{} as Participant];
 
 const App: React.FC = () => {
-  const [loadingDeadline, setLoadingDeadline] = useState(true);
   const [currentPage, setCurrentPage] = useState<string>('home');
   const [currentUser, setCurrentUser] = useState<User | null>(null);
 
