@@ -152,7 +152,7 @@ const App: React.FC = () => {
     }
   };
   
-  if (loadingDeadline || !deadline) {
+  if (loadingDeadline) { // 👈 التغيير الوحيد هنا لضمان فتح الموقع
   return (
     <div className="flex items-center justify-center h-[60vh] text-slate-500 font-bold">
       جاري تحميل البيانات...
