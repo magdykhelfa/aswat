@@ -38,10 +38,15 @@ const App: React.FC = () => {
       .then(settings => {
         if (settings.deadline) {
           setDeadline(new Date(settings.deadline));
+        } else {
+          // fallback علشان الموقع ميموتش
+          setDeadline(new Date('2026-06-30T23:59:59'));
         }
+        setLoadingDeadline(false); // ⭐⭐⭐ السطر المهم
       })
-      .finally(() => {
-        setLoadingDeadline(false); // 👈 مهم
+      .catch(() => {
+        setDeadline(new Date('2026-06-30T23:59:59'));
+         setLoadingDeadline(false); // ⭐⭐⭐ مهم جدًا
       });
   }, []);
 
