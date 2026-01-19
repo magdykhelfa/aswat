@@ -12,18 +12,7 @@ import Login from './pages/Login';
 
 const INITIAL_PARTICIPANTS: Participant[] = [
   {
-    id: '1',
-    fullName: 'أحمد محمد علي',
-    age: 22,
-    country: 'محافظة كفر الشيخ - مسير',
-    whatsapp: '+20123456789',
-    email: 'ahmed@example.com',
-    type: ParticipationType.Quran,
-    fileUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
-    status: ParticipationStatus.Pending,
-    ratings: [],
-    averageScore: 0,
-    submittedAt: new Date('2025-10-01')
+
   }
 ];
 
