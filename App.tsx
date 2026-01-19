@@ -29,7 +29,8 @@ const App: React.FC = () => {
     return saved ? JSON.parse(saved) : INITIAL_PARTICIPANTS;
   });
 
-  const [deadline, setDeadline] = useState<Date>(new Date('2026-06-30T23:59:59'));
+  const [deadline, setDeadline] = useState<Date | null>(null);
+  const [loadingDeadline, setLoadingDeadline] = useState(true);
 
   useEffect(() => {
     fetch("https://script.google.com/macros/s/AKfycbwpX1VObGTQ9ZnKH1F41CUFJP-L8vU6j_P2AIWuAFA9lthACDJ1XVzA1LFXPzQPtOxP/exec")
@@ -39,7 +40,8 @@ const App: React.FC = () => {
           setDeadline(new Date(settings.deadline));
         }
       })
-      .catch(() => {});
+      .finally(() => {
+        setLoadingDeadline(false);
   }, []);
 
   useEffect(() => {
@@ -148,7 +150,14 @@ const App: React.FC = () => {
         return <Home onNavigate={setCurrentPage} deadline={deadline} />;
     }
   };
-
+  if (loadingDeadline || !deadline) {
+  return (
+    <div className="flex items-center justify-center h-[60vh] text-slate-500 font-bold">
+      جاري تحميل البيانات...
+    </div>
+  );
+}
+    
   return (
     <div className="min-h-screen flex flex-col">
       <header className="bg-white shadow-md sticky top-0 z-50 h-16 md:h-20">
