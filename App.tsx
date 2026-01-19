@@ -34,18 +34,23 @@ const App: React.FC = () => {
     return saved ? JSON.parse(saved) : INITIAL_PARTICIPANTS;
   });
   
-  const [deadline, setDeadline] = useState<Date>(() => {
-    const saved = localStorage.getItem('aswat_deadline');
-    return saved ? new Date(saved) : new Date('2026-06-30T23:59:59');
-  });
+  const [deadline, setDeadline] = useState<Date>(
+  new Date('2026-06-30T23:59:59') // fallback فقط
+);
 
-  useEffect(() => {
-    localStorage.setItem('aswat_participants', JSON.stringify(participants));
-  }, [participants]);
+useEffect(() => {
+  fetch("https://script.google.com/macros/s/AKfycbwpX1VObGTQ9ZnKH1F41CUFJP-L8vU6j_P2AIWuAFA9lthACDJ1XVzA1LFXPzQPtOxP/exec")
+    .then(res => res.json())
+    .then(settings => {
+      if (settings.deadline) {
+        setDeadline(new Date(settings.deadline));
+      }
+    })
+    .catch(err => {
+      console.error("فشل تحميل الموعد", err);
+    });
+}, []);
 
-  useEffect(() => {
-    localStorage.setItem('aswat_deadline', deadline.toISOString());
-  }, [deadline]);
 
   useEffect(() => {
     localStorage.setItem('aswat_show_results', showCurrentResults.toString());
