@@ -15,6 +15,9 @@ const App: React.FC = () => {
   const [currentPage, setCurrentPage] = useState<string>('home');
   const [currentUser, setCurrentUser] = useState<User | null>(null);
 
+  const [deadline, setDeadline] = useState<Date | null>(null);
+  const [loadingDeadline, setLoadingDeadline] = useState(true);
+
   const [showCurrentResults, setShowCurrentResults] = useState<boolean>(() => {
     return localStorage.getItem('aswat_show_results') === 'true';
   });
@@ -28,9 +31,6 @@ const App: React.FC = () => {
     const saved = localStorage.getItem('aswat_participants');
     return saved ? JSON.parse(saved) : INITIAL_PARTICIPANTS;
   });
-
-  const [deadline, setDeadline] = useState<Date | null>(null);
-  const [loadingDeadline, setLoadingDeadline] = useState(true);
 
   useEffect(() => {
     fetch("https://script.google.com/macros/s/AKfycbwpX1VObGTQ9ZnKH1F41CUFJP-L8vU6j_P2AIWuAFA9lthACDJ1XVzA1LFXPzQPtOxP/exec")
