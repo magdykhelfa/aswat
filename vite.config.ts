@@ -5,7 +5,8 @@ import react from '@vitejs/plugin-react';
 export default defineConfig(({ mode }) => {
     const env = loadEnv(mode, '.', '');
     return {
-      base: '/aswat/', // السطر ده هو اللي هيحل مشكلة الصفحة البيضا ويخلي الروابط تظبط على جيت هوب
+      // تم التغيير هنا: لو هتستخدم فيرسل، خليه '/' أو شيله خالص
+      base: '/', 
       server: {
         port: 3000,
         host: '0.0.0.0',
