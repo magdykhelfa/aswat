@@ -11,7 +11,7 @@ interface ResultsProps {
 
 const Results: React.FC<ResultsProps> = ({ participants, showCurrentResults, lastYearWinners }) => {
   const rankedParticipants = [...participants]
-    .filter(p => p.ratings.length > 0)
+    .filter(p => p.averageScore > 0)
     .sort((a, b) => b.averageScore - a.averageScore);
 
   return (
