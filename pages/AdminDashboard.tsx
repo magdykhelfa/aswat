@@ -299,7 +299,31 @@ useEffect(() => {
                   <p className="text-xs text-emerald-600">تفعيل هذا الخيار سيجعل التقييمات مرئية للجمهور فوراً.</p>
                 </div>
                 <button 
-                  onClick={() => onToggleResults(!showCurrentResults)}
+                  onClick={async () => {
+  const newValue = !showCurrentResults;
+
+  onToggleResults(newValue);
+
+  const params = new URLSearchParams({
+    action: "updateSettings",
+    showResults: newValue.toString()
+  });
+
+  try {
+    await fetch(
+      "https://script.google.com/macros/s/AKfycbwpX1VObGTQ9ZnKH1F41CUFJP-L8vU6j_P2AIWuAFA9lthACDJ1XVzA1LFXPzQPtOxP/exec",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: params,
+      }
+    );
+  } catch (err) {
+    console.error("خطأ حفظ حالة النتائج", err);
+  }
+}}
                   className={`w-14 h-8 rounded-full relative transition-colors ${showCurrentResults ? 'bg-emerald-600' : 'bg-slate-300'}`}
                 >
                   <div className={`absolute top-1 w-6 h-6 bg-white rounded-full transition-all ${showCurrentResults ? 'right-7' : 'right-1'}`}></div>
