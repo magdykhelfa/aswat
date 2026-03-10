@@ -18,7 +18,7 @@ const Results: React.FC<ResultsProps> = ({ participants, showCurrentResults, las
     <div className="py-16 bg-slate-50 min-h-screen">
       <div className="max-w-4xl mx-auto px-4">
         
-        {showCurrentResults ? (
+        {rankedParticipants.length > 0 ? (
           <div>
             <div className="text-center mb-16">
               <div className="inline-block p-3 bg-emerald-100 rounded-full text-emerald-600 mb-4">
