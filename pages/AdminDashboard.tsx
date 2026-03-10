@@ -148,18 +148,26 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
   };
 
 
-  const getLocalDateString = (date: Date) => {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
-  };
+  const getLocalDateString = (date: Date | null) => {
 
-  const getLocalTimeString = (date: Date) => {
-    const hours = String(date.getHours()).padStart(2, '0');
-    const minutes = String(date.getMinutes()).padStart(2, '0');
-    return `${hours}:${minutes}`;
-  };
+  if (!date) date = new Date();
+
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+
+  return `${year}-${month}-${day}`;
+};
+
+  const getLocalTimeString = (date: Date | null) => {
+
+  if (!date) date = new Date();
+
+  const hours = String(date.getHours()).padStart(2, '0');
+  const minutes = String(date.getMinutes()).padStart(2, '0');
+
+  return `${hours}:${minutes}`;
+};
 
   const [tempDate, setTempDate] = useState(getLocalDateString(deadline));
   const [tempTime, setTempTime] = useState(getLocalTimeString(deadline));
