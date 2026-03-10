@@ -38,7 +38,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [tempWinners, setTempWinners] = useState<string[]>(lastYearWinners);
   const fileInputRef = useRef<HTMLInputElement>(null);
-
+  const [activeResultsYear, setActiveResultsYear] = useState(2026);
   const confirmDelete = () => {
     if (deleteId) {
       onDelete(deleteId);
@@ -293,6 +293,39 @@ useEffect(() => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             <div className="bg-white p-8 rounded-3xl shadow-sm border border-emerald-100">
               <h3 className="text-xl font-bold mb-6 text-emerald-900 border-b pb-4">إعدادات العرض العام</h3>
+              <div className="mt-6">
+
+<p className="font-bold text-slate-700 mb-3">
+السنة المعروضة للنتائج
+</p>
+
+<div className="flex gap-3">
+
+<button
+onClick={()=>setActiveResultsYear(2026)}
+className={`px-4 py-2 rounded-xl font-bold ${
+activeResultsYear===2026
+?'bg-emerald-600 text-white'
+:'bg-slate-200'
+}`}
+>
+نتائج 2026
+</button>
+
+<button
+onClick={()=>setActiveResultsYear(2025)}
+className={`px-4 py-2 rounded-xl font-bold ${
+activeResultsYear===2025
+?'bg-emerald-600 text-white'
+:'bg-slate-200'
+}`}
+>
+نتائج 2025
+</button>
+
+</div>
+
+</div>
               <div className="flex items-center justify-between p-4 bg-emerald-50 rounded-2xl">
                 <div>
                   <p className="font-bold text-emerald-900">إظهار نتائج العام الحالي</p>
