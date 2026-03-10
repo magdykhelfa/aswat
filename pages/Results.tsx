@@ -4,8 +4,9 @@ import { Participant } from '../types';
 interface ResultsProps {
   participants: Participant[];
   onNavigate: (page: string) => void;
-  showCurrentResults: boolean;
-  lastYearWinners: string[];
+  activeResultsYear: number;
+lastYearWinners: string[];
+currentYearWinners: string[];
 }
 
 const Results: React.FC<ResultsProps> = ({ showCurrentResults, lastYearWinners }) => {
