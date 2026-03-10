@@ -37,6 +37,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
   const [searchTerm, setSearchTerm] = useState('');
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [tempWinners, setTempWinners] = useState<string[]>(lastYearWinners);
+  const [tempCurrentWinners, setTempCurrentWinners] = useState<string[]>(Array(10).fill(""));
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [activeResultsYear, setActiveResultsYear] = useState(2026);
   const confirmDelete = () => {
@@ -104,7 +105,11 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
     newWinners[idx] = val;
     setTempWinners(newWinners);
   };
-
+  const handleCurrentWinnerChange = (idx: number, val: string) => {
+  const newWinners = [...tempCurrentWinners];
+  newWinners[idx] = val;
+  setTempCurrentWinners(newWinners);
+};
   const saveWinners = async () => {
     // تحديث محلي
     onUpdateLastYear(tempWinners);
@@ -374,6 +379,37 @@ activeResultsYear===2025
             </div>
 
             <div className="bg-white p-8 rounded-3xl shadow-sm border border-amber-100">
+              <div className="bg-white p-8 rounded-3xl shadow-sm border border-emerald-100 mb-8">
+
+<h3 className="text-xl font-bold mb-6 text-emerald-900 border-b pb-4">
+أوائل العام الحالي 2026
+</h3>
+
+<div className="space-y-3">
+
+{tempCurrentWinners.map((name, i) => (
+
+<div key={i} className="flex items-center gap-3">
+
+<span className="w-8 h-8 flex items-center justify-center bg-emerald-100 text-emerald-700 rounded-lg text-xs font-bold">
+#{i+1}
+</span>
+
+<input
+type="text"
+placeholder={`اسم الفائز بالمركز ${i+1}`}
+className="flex-1 p-3 border rounded-xl text-sm"
+value={name}
+onChange={e => handleCurrentWinnerChange(i,e.target.value)}
+/>
+
+</div>
+
+))}
+
+</div>
+
+</div>
               <h3 className="text-xl font-bold mb-6 text-amber-900 border-b pb-4">أوائل العام الماضي (10 مراكز)</h3>
               <div className="space-y-3 max-h-[400px] overflow-y-auto pr-2">
                 {tempWinners.map((name, i) => (
