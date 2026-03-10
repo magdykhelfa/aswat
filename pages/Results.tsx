@@ -9,7 +9,7 @@ lastYearWinners: string[];
 currentYearWinners: string[];
 }
 
-const Results: React.FC<ResultsProps> = ({ showCurrentResults, lastYearWinners }) => {
+const Results: React.FC<ResultsProps> = ({ activeResultsYear, lastYearWinners, currentYearWinners }) => {
 
   const [data, setData] = useState<Participant[]>([]);
 
@@ -48,7 +48,7 @@ const Results: React.FC<ResultsProps> = ({ showCurrentResults, lastYearWinners }
     <div className="py-16 bg-slate-50 min-h-screen">
       <div className="max-w-4xl mx-auto px-4">
 
-        {showCurrentResults ? (
+        {activeResultsYear === 2026 ? (
 
           <div>
 
@@ -128,7 +128,7 @@ const Results: React.FC<ResultsProps> = ({ showCurrentResults, lastYearWinners }
               </div>
 
               <h2 className="text-4xl font-bold text-emerald-900 font-amiri mb-2">
-                لوحة شرف أوائل العام الماضي 2025
+                نتائج مسابقة 2025
               </h2>
 
               <p className="text-slate-600">
